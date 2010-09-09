@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <title>World Editor</title>
+        <!-- <link rel="stylesheet" type="text/css"
+        href="stylesheets/gui-elements.css" /> -->
+        <style type="text/css">
+        	body {
+        		font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+				font-size: 9pt;
+        	}
+			
+            #world-wrapper {
+                position: absolute;
+				left: 0;
+				top: 0;
+				z-index: 0;
+				min-width: 100%;
+				min-height: 100%;
+            }
+            
+			.fixed {
+				position: fixed;
+				z-index: 10;
+				background-color: #ffffff;
+				opacity: 0.9;
+				padding: 5px;
+			}
+			
+			.world-field {
+				position: absolute;
+				width: {{ field_size }}px;
+				height: {{ field_size }}px;
+			}
+			
+			.toolbox {
+				left: 20px;
+				top: 100px;
+				height: 600px;
+			}
+			
+			.field-class {
+				padding: 2px;
+				border: solid 1px #000000;
+				margin: 2px;
+				display: block;
+			}
+			
+			.field-class:hover {
+				border-color: #00ff00;
+			}
+			
+			{% for field_class in field_classes %}
+				.field-class-{{ field_class.id }} {
+					background-image: url({{ field_class.image }});
+				}
+			{% endfor %}
+        </style>
+		
+		<script type="text/javascript" src="/scripts/InputManager.js"></script>
+		<script type="text/javascript" src="/scripts/BasicNetwork.js"></script>
+		<script type="text/javascript">
+			var Editor = {
+				/**
+				 * Represents the tools in the toolbox.
+				 */
+				Tools: {
+					fields: [],
+					active: null,
+					variations: {},
+					
+					activate: function(tool) {
+						if (this.active) {
+							this.deactivate();
+						}
+						this.active = tool;
+						tool.style.borderColor = "#ff0000";
+					},
+					
+					deactivate: function() {
+						this.active.setAttribute('style', '');
+						this.active = null;
+					},
+					
+					init: function() {
+						var self = this;
+					
+						var toolbox = document.getElementById('toolbox');
+						
+						var fieldbox = document.createElement('div');
+						toolbox.appendChild(fieldbox);
+						var img = null;
+						{% for field_class in field_classes %}
+							img = document.createElement('img');
+							img.setAttribute('class', "field-class");
+							img.src = "{{ field_class.image }}"
+							img.alt = ""
+							img.fieldClassId = {{ field_class.id }};
+							this.fields[{{ field_class.id }}] = img;
+							fieldbox.appendChild(img);
+							img.onclick = function() {
+								Editor.Tools.activate(this);
+							};
+						{% endfor %}
+					}
+				},
+				
+				inputManager: null,
+				worldWrapper: null,
+				
+				/**
+				 * Initializes the Editor.
+				 * @method
+				 */
+				init: function() {
+					this.Tools.init();
+
+					var self = this;
+					this.worldWrapper = document.getElementById("world-wrapper");
+					
+		            {% for field in world.fields.all %}
+						this.placeField({{ field.x }}, {{ field.y }}, {{ field.z }}, {{ field.field_class.id }});
+					{% endfor %}
+					
+					this.inputManager = new InputManager(this.worldWrapper);
+					this.inputManager.setMouseButtonEventHandler(InputManager.LMB, InputManager.DOWN, function(x, y) {
+						self.onMouseDown(x, y);
+					})
+					
+					var button = document.createElement("input");
+					button.setAttribute("type", "button");
+					button.value = "Save World";
+					button.onclick = function() {
+						self.saveWorld();
+					};
+					toolbox = document.getElementById('toolbox');
+					toolbox.appendChild(button);
+				},
+				
+				/**
+				 * Called when the left mouse button is pressed on the world.
+				 * @param {Number} x X coordinate of the mouse pointer.
+				 * @param {Number} y Y coordinate of the mouse pointer.
+				 */
+				onMouseDown: function(x, y) {
+					if (this.Tools.active) {
+						this.placeField(this.convertToFieldCoordinate(x),
+							this.convertToFieldCoordinate(y), 0, this.Tools.active.fieldClassId);
+					}
+				},
+				
+				/**
+				 * Converts a world coordinate component to the corresponding field coordinate
+				 * @param {Number} worldCoordinate The compontent to convert.
+				 * @return {Number}
+				 */
+				convertToFieldCoordinate: function(worldCoordinate) {
+					return Math.floor(worldCoordinate / {{ field_size }});
+				},
+				
+				placeField: function(x, y, z, classId) {
+					var id = 'field ' + x + ',' + y;
+					var field = document.getElementById(id);
+					if (!field) {
+						field = document.createElement('div');
+						field.setAttribute('id', id);
+						this.worldWrapper.appendChild(field);
+						field.setAttribute('style', 'left: ' + x * {{ field_size }} + "px; top: " + y * {{ field_size }} + "px; z-index: " + z + ';');
+					}
+					field.setAttribute('class', 'world-field field-class-' + classId);
+				},
+				
+				saveWorld: function() {
+					var dataArr = [];
+					for (var i = 0; i < this.worldWrapper.childNodes.length; ++i) {
+						var field = this.worldWrapper.childNodes[i];
+						if (field.id) {
+							dataArr.push(field.id.split(' ')[1] + "," + field.style.zIndex + "," + field.getAttribute("class").split('-')[3]);
+						}
+					}
+					var data = dataArr.join("|");
+					BasicNetwork.instance.post('/world/editor', {'fields': data, 'world_id': {{ world.id }} });
+				}
+			};
+			
+			/**
+			 * Abstract editor tool base class.
+			 */
+			Editor.Tool = function() {
+				
+			};
+			
+			Editor.Tool.prototype.injectMouse = function(x, y) {
+				
+			};
+			
+			Editor.Tool.prototype.injectClick = function(button, x, y) {
+				
+			};
+			
+			window.onload = function() {
+				Editor.init();
+			}
+		</script>
+    </head>
+    <body>
+    	<h1 class="fixed">{{ world.name }}</h1>
+		
+        <div id="world-wrapper">
+        </div>
+		
+		<div id="toolbox" class="fixed toolbox">
+		</div>
+		
+    </body>
+</html>

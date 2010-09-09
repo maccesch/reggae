@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+{% for field in fields %}
+	<field	x='{{ field.x }}' 
+			y='{{ field.y }}'
+			z='{{ field.z }}'
+			image='{{ field.field_class.image }}'
+			/>
+{% endfor %}
+<!-- TODO : overlays -->
+{% for wall in walls %}
+	<wall	x='{{ wall.x }}'
+			y='{{ wall.y }}'
+			x2='{{ wall.x2 }}'
+			y2='{{ wall.y2 }}'
+			z='{{ wall.z }}'
+			height='{{ wall.height }}'
+			/>
+{% endfor %}
+</xml>

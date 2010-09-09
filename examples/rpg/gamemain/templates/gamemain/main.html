@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% load reggae_tags %}
+
+{% block title %}{{ name }} ({{ version }}){% endblock %}
+
+{% block head %}
+	<style type="text/css">
+		#reggae_canvas {
+			top: 30px;
+			left: 30px;
+			border: 2px solid silver;
+			position: absolute;
+			width: 640px;
+			height: 480px;
+		}
+		
+		#login_state {
+			position: absolute;
+			left: 704px;
+			top: 30px;
+			padding: 10px;
+			width: 303px;
+			border: 2px solid silver;
+			background-color: #eeffee;
+			height: 30px;
+		}
+	</style>
+	{% reggae_scripts %}
+{% endblock head %}
+
+{% block content %}
+	<div id="reggae_canvas"></div>
+
+	<div id="login_state">
+		{% include "registration/login_state.html" %}
+	</div>
+{% endblock content %}
