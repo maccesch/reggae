@@ -1,0 +1,75 @@
+{% load cms_tags menu_tags zinnia_tags i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+
+<head>
+	<title>{% block title %}{% endblock %} - Reggae</title>
+	<meta name = "language" content = "de" />
+	
+	<link rel="stylesheet" type="text/css" href="/media/styles/base.css"/>
+	<link rel="shortcut icon" type="image/png" href="/media/favicon.ico"/>
+
+    <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of lastest entries" %}" href="{% url zinnia_entry_latest_feed %}" />
+
+	<!-- Google Analytics -->
+<!--	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-12612429-2']);
+	  _gaq.push(['_trackPageview']);
+	
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script> -->
+	<script type="text/javascript" src="/media/js/Hyphenator.js"></script>
+        <script type="text/javascript">
+        	Hyphenator.config({
+        		displaytogglebox : false,
+        		minwordlength : 4
+        	});
+        	Hyphenator.run();
+        </script>
+	
+	{% block head %}
+	{% endblock %}
+
+</head>
+
+<body>
+
+<div id="page-wrapper">
+	<div id="banner-top">
+		{% if request.path == '/' %}
+			<h1 id="title">Reggae</h1>
+		{% else %}
+			<h3 id="title">Reggae</h3>
+		{% endif %}
+	</div>
+	<div id="banner-menu">
+		{% if request.path == '/' %}
+			<h2 id="subtitle">Realtime Onlinegames in your Browser</h2>
+		{% else %}
+			<strong id="subtitle">Realtime Onlinegames in your Browser</strong>
+		{% endif %}
+		<ul id="menu">
+			{% block menu %}
+			{% endblock %}
+		</ul>
+	</div>
+	<div id="content">		
+		{% block content %}
+		{% endblock %}
+	</div>
+	<div id="sidebar">
+		{% block sidebar %}
+		{% endblock %}
+	</div>
+	<div id="footer">
+	</div>
+</div>
+
+</body>
+
+</html>

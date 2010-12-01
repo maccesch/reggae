@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ flatpage.title }}{% endblock %}
+
+{% block menu %}
+	<li class="active"><a href="/">Home</a></li>
+	<li><a href="/demo/">Demo</a></li>
+	<li><a href="#">Download</a></li>
+	<li><a href="#">Docs</a></li>
+	<li><a href="#">Blog</a></li>
+	<li><a href="#">Code</a></li>
+{% endblock %}
+
+{% block content %}
+	{{ flatpage.content }}
+{% endblock %}
+
+{% block sidebar %}
+{% endblock %}
