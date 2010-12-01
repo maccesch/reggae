@@ -31,6 +31,9 @@ __import__(name)
 settings_mod = sys.modules[name]
 setup_environ(settings_mod)
 
+if DJANGO_PROJECT_PATH not in sys.path:
+    sys.path.append(DJANGO_PROJECT_PATH)
+
 # start server
 from reggae.server import gameserver
 

@@ -9,3 +9,5 @@ DS_STORE
 *.egg-info
 build
 dist
+*.svg
+
