@@ -3,13 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
 
 <head>
-	<title>{% block title %}{% endblock %} - Reggae</title>
+	<title>{% block title %}{% endblock %}</title>
 	<meta name = "language" content = "de" />
 	
-	<link rel="stylesheet" type="text/css" href="/media/styles/base.css"/>
+	<link rel="stylesheet" type="text/css" href="/media/css/base.css"/>
 	<link rel="shortcut icon" type="image/png" href="/media/favicon.ico"/>
-
-    <link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of lastest entries" %}" href="{% url zinnia_entry_latest_feed %}" />
+	
+	<link rel="alternate" type="application/rss+xml" title="{% trans "RSS Feed of lastest entries" %}" href="{% url zinnia_entry_latest_feed %}" />
 
 	<!-- Google Analytics -->
 <!--	<script type="text/javascript">
@@ -24,13 +24,13 @@
 	  })();
 	</script> -->
 	<script type="text/javascript" src="/media/js/Hyphenator.js"></script>
-        <script type="text/javascript">
-        	Hyphenator.config({
-        		displaytogglebox : false,
-        		minwordlength : 4
-        	});
-        	Hyphenator.run();
-        </script>
+  <script type="text/javascript">
+  	Hyphenator.config({
+  		displaytogglebox : false,
+  		minwordlength : 4
+  	});
+  	Hyphenator.run();
+  </script>
 	
 	{% block head %}
 	{% endblock %}

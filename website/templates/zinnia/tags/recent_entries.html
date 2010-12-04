@@ -1,0 +1,17 @@
+{% load i18n %}
+{% for entry in entries %}
+
+<div>
+  <h4>
+    <a href="{{ entry.get_absolute_url }}" title="{{ entry.title }}" rel="bookmark">{{ entry.title }}</a>
+  </h4>
+  {{ entry.content|truncatewords_html:50|safe }}
+  <p>
+    <a href="{{ entry.get_absolute_url }}">read more</a>
+  </p>
+</div>
+{% empty %}
+<div>
+  {% trans "No entries yet." %}
+</div>
+{% endfor %}

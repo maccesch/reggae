@@ -1,14 +1,12 @@
 {% extends "base.html" %}
+{% load zinnia_tags %}
 
 {% block title %}{{ flatpage.title }}{% endblock %}
 
 {% block menu %}
-	<li class="active"><a href="/">Home</a></li>
-	<li><a href="/demo/">Demo</a></li>
-	<li><a href="#">Download</a></li>
-	<li><a href="#">Docs</a></li>
-	<li><a href="#">Blog</a></li>
-	<li><a href="#">Code</a></li>
+  {% with "home" as active %}
+    {% include "includes/menu.html" %}
+  {% endwith %}
 {% endblock %}
 
 {% block content %}
@@ -16,4 +14,8 @@
 {% endblock %}
 
 {% block sidebar %}
+<div class="recents">
+  <h3>Blog</h3>
+  {% get_recent_entries 5 %}
+</div>
 {% endblock %}

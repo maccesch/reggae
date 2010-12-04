@@ -1,0 +1,304 @@
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f7c071;
+  font-size: 15px;
+}
+
+a {
+  text-decoration: none;
+  color: #da1a00;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  margin-top: 30px;
+  font-size: 18px
+}
+
+h2 {
+  font-size: 18px;
+}
+
+h3 {
+  margin-top: 30px;
+  font-size: 18px;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+input {
+  border: 2px solid #555555;
+  padding: 3px 5px;
+  font-size: 14px;
+  -moz-box-sizing: content-box;
+  -moz-appearance: none;
+  height: 17px;
+  display: block;
+}
+
+textarea {
+  border: 2px solid #555555;
+  padding: 3px 5px;
+  font-size: 14px;
+}
+
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+  background: #ffee8a;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+
+#page-wrapper {
+  width: 950px;
+  margin: 0 auto;
+  background: #f7c985;
+}
+
+#banner-top {
+  background: url(../img/banner-bg.png) #ee3119;
+  height: 96px;
+  padding-top: 22px;
+}
+
+#banner-menu {
+  width: 900px;
+  height: 109px;
+  background: url(../img/navi-bg.png) no-repeat;
+  margin: -64px -54px -30px;
+  padding: 72px 61px 0 83px;
+  position: absolute;
+}
+
+#title {
+  width: 152px;
+  height: 57px;
+  margin: 0 0 0 30px;
+  text-indent: -500px;
+  overflow: hidden;
+  background: url(../img/logo.png) no-repeat;
+}
+
+#subtitle {
+  margin: 0;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: normal;
+  display: block;
+  float: left;
+}
+
+#menu {
+  float: right;
+  padding: 0;
+  list-style: none;
+  margin: 0;
+}
+
+#menu li {
+  float: left;
+  margin: 0 16px;
+}
+
+#menu li .line {
+  visibility: hidden;
+  background: #000000;
+  height: 2px;
+  width: 100%;
+  margin-top: -2px;
+}
+
+#menu li.active .line {
+  visibility: visible;
+}
+
+#menu li a {
+  display: block;
+  overflow: hidden;
+  text-indent: -300px;
+  height: 16px;
+}
+
+#navi-home {
+  background: url(../img/navi-home.png) no-repeat;
+  width: 43px;
+}
+
+#navi-demo {
+  background: url(../img/navi-demo.png) no-repeat;
+  width: 44px;
+}
+
+#navi-download {
+  background: url(../img/navi-download.png) no-repeat;
+  width: 76px;
+}
+
+#navi-docs {
+  background: url(../img/navi-docs.png) no-repeat;
+  width: 35px;
+}
+
+#navi-blog {
+  background: url(../img/navi-blog.png) no-repeat;
+  width: 32px;
+}
+
+#navi-code {
+  background: url(../img/navi-code.png) no-repeat;
+  width: 38px;
+}
+
+#content {
+  width: 528px;
+  float: left;
+  padding: 65px 30px 20px;
+  background: #f8d195;
+}
+
+#sidebar {
+  width: 302px;
+  float: right;
+  padding: 65px 30px 20px;
+  font-size: 14px;
+}
+
+#sidebar h3 {
+  margin-bottom: 10px;
+}
+
+#sidebar h4 {
+  margin-bottom: 10px;
+}
+
+#sidebar ul {
+  margin: 10px 0;
+}
+
+#sidebar p {
+  margin: 10px 0;
+}
+
+#footer {
+  clear: both;
+}
+
+h2.entry-title {
+  font-size: 16px;
+  margin-top: 30px;
+  margin-bottom: 0;
+}
+
+p.entry-info {
+  font-size: 12px;
+  margin-top: 3px;
+  color: #3c3c3c;
+}
+
+#sidebar .tags ul {
+  list-style: none;
+  margin: 10px 0 16px;;
+  padding: 0;
+}
+
+.tags ul li {
+  display: inline;
+  padding: 1px;
+}
+
+.tag_1 {
+  font-size: 10px;
+}
+
+.tag_2 {
+  font-size: 13px;
+}
+
+.tag_3 {
+  font-size: 16px;
+}
+
+.tag_4 {
+  font-size: 19px;
+}
+
+.tag_5 {
+  font-size: 22px;
+}
+
+.tag_6 {
+  font-size: 25px;
+}
+
+#searchbox {
+  float: left;
+  margin-right: 5px;
+}
+
+#searchform .submitbutton {
+}
+
+.entry-footer {
+  font-size: 12px;
+  background: #f7c071;
+  padding: 10px;
+}
+
+.entry-tags {
+  margin-top: 0;
+}
+
+.entry-meta-header {
+  font-weight: bold;
+}
+
+.entry-footer ul {
+  padding: 0;
+  margin-top: 5px;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+#comments, #pingbacks, #trackbacks {
+  font-size: 12px;
+  margin: 15px 0;
+}
+
+.commentForm {
+  font-size: 12px;
+  margin-top: 30px;
+}
+
+.commentForm input {
+  font-size: 12px;
+  height: 15px;
+  width: 50%;
+}
+
+.commentForm input.submit-post {
+  width: 15%;
+}
+
+.commentForm label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+
+.commentForm textarea {
+  width: 518px;
+  font-size: 12px;
+}
+
+#sidebar iframe {
+  display: block;
+}

@@ -1,0 +1,49 @@
+{% load tagging_tags comments i18n %}
+
+<div class="entry-header span-16 last">
+  <h2 class="entry-title">
+    <a href="{{ object.get_absolute_url }}" title="{{ object.title }}" rel="bookmark">
+      {{ object.title }}
+    </a>
+  </h2>
+  <p class="entry-info">
+    by {% for author in object.authors.all %}
+    <span class="vcard author">
+      <a href="{% url zinnia_author_detail author %}" class="fn nickname url"
+         title="Show {{ author|capfirst }} entries">
+        {{ author|capfirst }}
+      </a>
+    </span>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    on
+   <span class="published" title="{{ object.creation_date|date:"c" }}Z">
+      {{ object.creation_date|date:"Y-m-d" }}
+    </span>
+    {% comment %}
+    {% trans "in" %}
+    {% for category in object.categories.all %}
+    <a href="{{ category.get_absolute_url }}" title="{{ category }}" rel="tag category">
+      {{ category }}
+    </a>
+    {% if not forloop.last %}, {% endif %}
+    {% endfor %}.
+    {% endcomment %}
+  </p>
+</div>
+
+<div class="entry-body span-16 last">
+  {% if object.image %}
+  <div class="entry-image">
+    <p>
+      <a href="{{ object.get_absolute_url }}" rel="bookmark">
+	<img src="{{ object.image.url }}" alt="{{ object.title }}" class="left" />
+      </a>
+    </p>
+  </div>
+  {% endif %}
+  <div class="entry-content">
+    {{ object_content }}
+  </div>
+</div>
+
+

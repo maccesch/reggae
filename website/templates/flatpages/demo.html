@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load zinnia_tags %}
+
+{% block title %}{{ flatpage.title }}{% endblock %}
+
+{% block menu %}
+  {% with "home" as active %}
+    {% include "includes/menu.html" %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+  {{ flatpage.content }}
+{% endblock %}
+
+{% block sidebar %}
+<div class="share">
+  <h3>Share</h3>
+  <!-- facebook -->
+  <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Freggaeproject.org%2Fdemo%2F&amp;layout=standard&amp;show_faces=true&amp;width=300&amp;action=like&amp;colorscheme=light&amp;height=24" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:24px;" allowTransparency="true"></iframe>
+  <!-- twitter -->
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://reggaeproject.com/demo/" data-text="Realtime Online Browsergame-Engine" data-count="horizontal">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+  <!-- stumbleupon -->
+  <script src="http://www.stumbleupon.com/hostedbadge.php?s=1&r=http://reggaeproject.org/demo/"></script>
+</div>
+{% endblock %}
