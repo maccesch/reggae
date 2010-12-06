@@ -84,11 +84,11 @@ INSTALLED_APPS = (
     "reggae",
     "reggae.conf",
     "reggae.world",
-    "reggae.usermanagement",
     "reggae.gameobjectpersistence",
     "reggae.controls",
     
     # game application
+    "usermanagement",
     "gamemain",
 )
 

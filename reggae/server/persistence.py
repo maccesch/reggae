@@ -1,14 +1,15 @@
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.contrib.auth.middleware import AuthenticationMiddleware
 from django.conf import settings
+from django.contrib.auth.models import User
 
-from reggae.gameobjectpersistence.models import *
-from reggae.controls.models import *
-from reggae.usermanagement.models import *
-from reggae.world.models import *
+from reggae.gameobjectpersistence.models import MovingPoint
+from reggae.controls.models import Control
+from usermanagement.models import PlayerProfile, AvatarView, ViewPlayerNameDecoration,\
+	Avatar
+from reggae.world.models import WorldView
 
 from random import random
-
 
 class PseudoRequest():
 	"""
@@ -26,15 +27,50 @@ def get_user_for_session_id(session_id):
 	get_user_for_session_id.session_mw.process_request(req)
 	get_user_for_session_id.auth_mw.process_request(req)
 	
-	return req.user
+	if req.user.is_anonymous() and settings.ALLOW_ANONYMOUS_USERS:
+		return _create_anon_user()
+	else:
+		return req.user
 
 get_user_for_session_id.session_mw = SessionMiddleware()
 get_user_for_session_id.auth_mw = AuthenticationMiddleware()
 
+# TODO : all user profiles are gamecode
+def get_profile_for_user(user):
+	profile = user.playerprofile_set.all()[0].name
+	return profile
+
+
+def _create_anon_user():
+	_create_anon_user.anonymous_user_no += 1
+	
+	username = 'guest' + str(_create_anon_user.anonymous_user_no)
+	user = User.objects.filter(username__exact=username)
+	if len(user) > 0:
+		user = user[0]
+	else:
+		user = User(username=username, password='1234')
+		user.save();
+		_create_default_profile(user)
+	
+	return user
+
+_create_anon_user.anonymous_user_no = 0
+
+
+# TODO : move this to the PlayerProfile model
+def _create_default_profile(user):
+	avatar = Avatar(image_path='avatars/shortbrown.png')
+	avatar.save()
+	
+	profile = PlayerProfile(user=user, name=user.username, avatar=avatar)
+	profile.save()
+	return profile
+
 
 def _create_model_elements_for_new_user(user):
 	"""Creates all model elements and views for a new user. GAME_CODE"""
-	created_models = []
+#	created_models = []
 	
 	mp = MovingPoint(vx=0, vy=0, vz=0)
 	mp.x=random()*700 + 21 * 64

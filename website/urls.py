@@ -16,6 +16,10 @@ urlpatterns = patterns('',
 
     (r'^blog/', include('zinnia.urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
+    
+    (r'^docs/', 'django.views.generic.simple.redirect_to', { 'url': 'https://github.com/maccesch/reggae/wiki' }),
+    (r'^code/', 'django.views.generic.simple.redirect_to', { 'url': 'https://github.com/maccesch/reggae' }),
+    (r'^download/', 'django.views.generic.simple.redirect_to', { 'url': 'https://github.com/maccesch/reggae/archives/master' }),
 
     (r'^admin/', include(admin.site.urls)),
 )

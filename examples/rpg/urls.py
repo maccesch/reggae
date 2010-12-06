@@ -5,7 +5,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^world/', include('reggae.world.urls')),
-    (r'^accounts/', include('reggae.usermanagement.urls')),
+    (r'^accounts/', include('usermanagement.urls')),
 
     (r'^admin/', include(admin.site.urls)),
     

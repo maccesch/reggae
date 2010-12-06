@@ -11,3 +11,5 @@ SKINS_ROOT = 'skins/'
 SKIN = 'default'
 
 REGGAE_CANVAS_ID = 'reggae_canvas'
+
+ALLOW_ANONYMOUS_USERS = True

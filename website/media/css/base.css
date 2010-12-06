@@ -302,3 +302,7 @@ p.entry-info {
 #sidebar iframe {
   display: block;
 }
+
+.feature-list li {
+  padding: 3px 0;
+}

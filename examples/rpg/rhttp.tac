@@ -33,6 +33,13 @@ setup_environ(settings_mod)
 
 if DJANGO_PROJECT_PATH not in sys.path:
     sys.path.append(DJANGO_PROJECT_PATH)
+    
+try:
+    # reggae installed in PYTHONPATH
+    import reggae
+except ImportError:
+    # source repository layout
+    sys.path.append(normpath(join(DJANGO_PROJECT_PATH, '../..')))
 
 # start server
 from reggae.server import gameserver

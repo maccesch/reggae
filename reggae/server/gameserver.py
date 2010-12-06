@@ -5,8 +5,8 @@ from twisted.internet import reactor
 
 import django.core.handlers.wsgi
 
-import sys, os, urllib, string
-from os.path import dirname, join, abspath, normpath
+import sys, urllib, string
+from os.path import dirname, join
 from cStringIO import StringIO
 from wsgiref.handlers import BaseHandler
 
@@ -15,10 +15,9 @@ from grid import Grid
 from simulation import Simulator
 
 from django.contrib.admin import __file__ as __django_admin_file__
-from django.db.models import Q
 from django.conf import settings
 
-from reggae.gameobjectpersistence.models import *
+from reggae.gameobjectpersistence.models import Point
 from reggae.world.models import World
 from reggae import __file__ as __reggae_file__
 
@@ -39,7 +38,7 @@ class RealtimeHttpProtocol(Protocol):
 		self.write_line("Server:" + self.server)
 		self.write_line("Content-Type:" + content_type)
 		self.write_line()
-   
+
 	def write_file(self, content_type):
 		"""Writes the contents of the requested (self.path) file."""
 		
@@ -82,7 +81,7 @@ class RealtimeHttpProtocol(Protocol):
 				c.write_line("dis")
 				c.write_line(str(self.client_id))
 					
-		   
+
 	def parse_url(self, data):
 		"""Builds the strings self.method, self.path, self.query"""
 		
@@ -202,7 +201,7 @@ class RealtimeHttpProtocol(Protocol):
 			elif op_code == 'msg':
 				self._handle_message(data_array, client)
 			
-   
+
 	def _handle_message(self, data_array, client):
 		"""Handle a realtime message request from client"""
 		element_id = int(data_array[1]);
@@ -212,7 +211,7 @@ class RealtimeHttpProtocol(Protocol):
 		for c in clients:
 			if c != client:
 				c.write_line(response_data)
-   
+
 	
 	def _handle_change_velocity(self, data_array, client):
 		"""Handle a realtime change velocity request from client"""
@@ -274,7 +273,7 @@ class RealtimeHttpProtocol(Protocol):
 		else:
 			self.client_id = user.id
 			# TODO : multiple player profiles?
-			self.client_name = user.playerprofile_set.all()[0].name
+			self.client_name = persistence.get_profile_for_user(user)
 			
 			self.write_response_start("text/plain")
 			self.write_line("id")
@@ -344,14 +343,14 @@ class RealtimeHttpProtocol(Protocol):
 		
 		self.transport.write(self_model_str)
 		
-	 
+
 	def _write_controls_for_user(self, user):
 		ctrlStr = ""
 		for ctrl in user.control_set.all():
 			ctrlStr += ctrl.to_realtime_http() + "\n"
 			
 		self.transport.write(ctrlStr[0:-1])
-			   
+
 
 	def write_line(self, message=""):
 		"""Sends a text line to the client"""
@@ -367,7 +366,7 @@ class ProtocolWsgiHandler(BaseHandler):
 		self.protocol = protocol
 		
 		self.build_env()
-   
+
 	def build_env(self):
 		self.env = {}
 		self.env['REQUEST_METHOD'] = self.protocol.method
@@ -383,7 +382,7 @@ class ProtocolWsgiHandler(BaseHandler):
 			self.env["CONTENT_TYPE"] = self.protocol.headers["content-type"]
 		if "content-length" in self.protocol.headers:
 			self.env["CONTENT_LENGTH"] = self.protocol.headers["content-length"]
-   
+
 		for header_key in self.protocol.headers:
 			key = header_key.replace('-', '_').upper()
 			value = self.protocol.headers[header_key]

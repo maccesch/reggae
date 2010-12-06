@@ -57,7 +57,7 @@ class AvatarSelect(Widget):
         i = 0
         for avatar in self.avatars:
             # TODO : where to get the root image url?
-            options += u'<img src="/' + settings.IMAGES_ROOT + avatar.image_path + '" alt="avatar option ' + unicode(i+1) + \
+            options += u'<img src="' + settings.MEDIA_URL + settings.SKINS_ROOT + settings.SKIN + '/' + settings.IMAGES_ROOT + avatar.image_path + '" alt="avatar option ' + unicode(i+1) + \
                         '" style="float: left; width: ' + unicode(self.width) + 'px;"/>'
             i += 1
             
@@ -98,7 +98,7 @@ class AvatarSelect(Widget):
     def _render_right_button(self, button_right_name):
         """Returns html for the right browse button"""
         button = u'<img id="' + button_right_name + '" src="' + settings.MEDIA_URL + \
-                settings.SKINS_ROOT + settings.SKIN + '/' + settings.IMAGES_ROOT + '/images/widgets/avatarselect/button_right.png"/>'
+                settings.SKINS_ROOT + settings.SKIN + '/' + settings.IMAGES_ROOT + '/widgets/avatarselect/button_right.png"/>'
                 
         return button
     

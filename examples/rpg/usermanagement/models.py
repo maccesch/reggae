@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from reggae.gameobjectpersistence.models import View, Point
 
+# TODO : this is gamecode?
+
 class Avatar(models.Model):
     """Avatar of a player"""
     image_path = models.CharField(max_length="512", help_text="Path of the avatar image relative to images path")

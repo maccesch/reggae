@@ -8,7 +8,7 @@
 {% block content %}
 	<h1>Create your player profile</h1>
 
-	<form id="player_profile_form" method="post" action="{% url reggae.usermanagement.views.player_profile_creation %}">
+	<form id="player_profile_form" method="post" action="{% url usermanagement.views.player_profile_creation %}">
 	<table>
 		{{ form.as_table }}
 	</table>

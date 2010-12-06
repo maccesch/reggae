@@ -1,5 +1,5 @@
 from django import forms
-from widgets import *
+from widgets import AvatarSelect
 
 class PlayerProfileForm(forms.Form):
     

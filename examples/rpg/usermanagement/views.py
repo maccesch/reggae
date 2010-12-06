@@ -4,9 +4,10 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from models import *
 
-from forms import *
+from models import PlayerProfile
+from forms import PlayerProfileForm
+
 
 def user_creation(request):
     """Shows a form to create a new user"""
