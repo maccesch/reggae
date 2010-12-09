@@ -23,6 +23,7 @@ settings.FIELD_SIZE = settings.FIELD_SIZE || 64;
 
 settings.REGGAE_CANVAS_ID = settings.REGGAE_CANVAS_ID || 'reggae_canvas';
 
+
 /**
  * @method
  * @return {String} The path where images can be found.

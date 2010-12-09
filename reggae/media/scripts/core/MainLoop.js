@@ -21,13 +21,9 @@ function package_core_MainLoop() {
  */
 MainLoop = function() {
 
-	this.objectsToUpdate = [];
+	this.objectsToUpdate = [[], [], []];
 	this.objectsToValidate = [];
-	
-	// TODO : MainLoop is in core layer and therefore doesn't know about views.
-	this.viewsToUpdate = [];
-	this.constraintsToUpdate = [];
-	
+		
 	this.lastTimestamp = 0;
 	this.deltaT = 0;
 	
@@ -74,35 +70,24 @@ MainLoop.prototype.doObjectValidation = function(deltaT) {
  * Registers an object which will be updated and validated, too,
  * if it is or a subclass of MovingPoint. Registered object are active.
  * @param {Object} object The object to be updated. It must provide a update(deltaT) method.
+ * @param {Integer} order Ordering in updates. Must be from 0 to 2 inclusively. 0 means these objects are updated first, 2 means last.
+ * @param {Boolean} [validate] If true the object will be added to this.objectsToValidate. During the update
+ * process first update is called on everyone then this.doObjectValidation is called and then commit is called on everyone.
  * @see #activate
  * @see #deactivate
  * @see #freeze
  * @method
  */
-MainLoop.prototype.register = function(object) {
+MainLoop.prototype.register = function(object, order, validate) {
 	if (!object.update || !(object.update instanceof Function)) {
 		console.debug("Warning: The registered object doesn't have an update method!");
 	}
-	
+		
 	object.active = true;
 	
-	// TODO : enclose this in try catch block?
+	this.objectsToUpdate[order].push(object);
 	
-	// physical objects have to be updated before views
-	
-	// is object a View?
-	if (object.getViewElement) {
-		this.viewsToUpdate.push(object);
-	}
-	// constraints
-	else if (object.object) {
-		this.constraintsToUpdate.push(object);
-	}
-	else {
-		this.objectsToUpdate.unshift(object);
-	}
-	// is object a MovingPoint ?
-	if (object.dist) {
+	if (validate) {
 		this.objectsToValidate.push(object);
 	}
 };
@@ -110,77 +95,50 @@ MainLoop.prototype.register = function(object) {
 /**
  * Unregisters a registered object. If the object wasn't registered this method does nothing.
  * @param {Object} object The object to unregister.
+ * @param {Integer} order Same as order at #register.
+ * @param {Boolean} [validate] Same as validate at #register.
  * @see #register
  * @method
  */
-MainLoop.prototype.unregister = function(object) {
-	var index = 0;
+MainLoop.prototype.unregister = function(object, order, validate) {
 	
-	// object instance of View ?
-	if (object.getElement && object.getViewElement) {
-		index = this.viewsToUpdate.indexOf(object);
-		if (index) {
-			this.viewsToUpdate.splice(index, 1);
-		}
-	}
-	// constraints
-	else if (object.object) {
-		index = this.constraintsToUpdate.indexOf(object);
-		if (index >= 0) {
-			this.constraintsToUpdate.splice(index, 1);
-		}
-	}
-	else {
-		index = this.objectsToUpdate.indexOf(object);
-		if (index >= 0) {
-			this.objectsToUpdate.splice(index, 1);
-			if (object instanceof MovingPoint) {
-				index = this.objectsToValidate.indexOf(object);
-				this.objectsToValidate.splice(index, 1);
-			}
+	var index = this.objectsToUpdate[order].indexOf(object);
+	if (index >= 0) {
+		this.objectsToUpdate.splice(index, 1);
+		if (validate) {
+			index = this.objectsToValidate.indexOf(object);
+			this.objectsToValidate.splice(index, 1);
 		}
 	}
 };
 
 /**
  * Deactivates the given object. That is this object won't be updated any more.
- * If the object is a view it will also be hidden.
+
  * @param {Object} object The object to deactivate.
  * @method
  */
 MainLoop.prototype.deactivate = function(object) {
 	object.active = false;
 	
-	// TODO : enclose this in try catch block?
-	
-	if (object instanceof Views.SimpleView) {
-		object.getElement().style.visibility = "hidden";
-	}
+//	if (object instanceof Views.SimpleView) {
+//		object.getElement().style.visibility = "hidden";
+//	}
 };
 
-/**
- * Freezes the given object. That is this object won't be updated any more.
- * This is the same as deactivate except for views. When calling freeze on a view
- * it won't be hidden as opposed to deactivate.
- * @param {Object} object The object to freeze.
- * @method
- */
-MainLoop.prototype.freeze = function(object) {
-	object.active = false;
-};
 
 /**
  * Activates the given object. That is this object will be updated every frame.
- * If the object is a view it will also be set visible.
  * @param {Object} object The object to deactivate.
  * @method
  */
 
 MainLoop.prototype.activate = function(object) {
+    
 	object.active = true;
-	if (object instanceof SimpleView) {
-		object.viewElement.style.visibility = "visible";
-	}
+//	if (object instanceof SimpleView) {
+//		object.viewElement.style.visibility = "visible";
+//	}
 };
 
 // calculates the current frame time. called by updateAll
@@ -206,9 +164,9 @@ MainLoop.prototype.updateAll = function() {
 	
 	var curO = null;
 	
-	this.updateList(this.objectsToUpdate);
-	this.updateList(this.constraintsToUpdate);
-	this.updateList(this.viewsToUpdate);
+	this.updateList(this.objectsToUpdate[0]);
+    this.updateList(this.objectsToUpdate[1]);
+    this.updateList(this.objectsToUpdate[2]);
 	
 	this.doObjectValidation(this.deltaT);
 	

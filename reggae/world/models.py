@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 #from building.models import *
 #from trading.models import Item
 from reggae.world.settings import FIELD_SIZE
-from reggae.gameobjectpersistence.models import Point, Wall
+from reggae.gameobjects.models import Point, Wall
 
 
 #class Coordinates(models.Model):
@@ -32,6 +32,7 @@ class World(models.Model):
     """The game world."""
     
     name = models.CharField(max_length=255, help_text="The name of this world")
+    game_id = models.IntegerField(help_text="The id of the game this world belongs to")
 
     def get_width(self):
         """Returns the total width of the world in world units"""

@@ -252,7 +252,7 @@ Grid.prototype.getIntersectingObstacle = function(xp, yp, xq, yq,
  * @returns Found obstacles.
  */
 Grid.prototype.getObstaclesForLine = function(x1, y1, x2, y2) {
-	// TODO :
+	// TODO : when line spans more than two cells this isn't valid
 	return this.getObstacles(x1, y1).concat(this.getObstacles(x2, y2));
 };
 

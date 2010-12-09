@@ -15,16 +15,16 @@ function InputManager(rootElement) {
 
 	this.rootElement = rootElement;
 	
-	this.onMouseDown = [function() {
-	}, function() {
-	}, function() {
-	}
-];
-	this.onMouseUp = [function() {
-	}, function() {
-	}, function() {
-	}
-];
+	this.onMouseDown = [
+	   function() {},
+	   function() {},
+	   function() {}
+	];
+	this.onMouseUp = [
+	   function() {},
+	   function() {},
+	   function() {}
+	];
 	this.lastMouseX = 0;
 	this.lastMouseY = 0;
 	
@@ -278,7 +278,7 @@ InputManager.prototype.mouseMoveCallback = function(event) {
 		return;
 	}
 
-	// TODO : how to this nowadays? see also the ohter mouse callbacks.
+	// TODO : how to do this nowadays? see also the other mouse callbacks.
 	var x = (document.all) ? window.event.x + document.body.scrollLeft : event.pageX;
 	var y = (document.all) ? window.event.y + document.body.scrollTop : event.pageY;
 	

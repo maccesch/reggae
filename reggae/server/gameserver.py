@@ -17,7 +17,7 @@ from simulation import Simulator
 from django.contrib.admin import __file__ as __django_admin_file__
 from django.conf import settings
 
-from reggae.gameobjectpersistence.models import Point
+from reggae.gameobjects.models import Point
 from reggae.world.models import World
 from reggae import __file__ as __reggae_file__
 
@@ -30,30 +30,38 @@ SERVER_PORT = getattr(settings, 'SERVER_PORT', 8090)
 class RealtimeHttpProtocol(Protocol):
 	
 	def __init__(self):
-		self.server = "Macceschs Twisted RHTTP/alpha4"
+		self.server = "Reggae Twisted RHTTP/alpha4"
 		self.waiting_for_data = False;
 	
 	def write_response_start(self, content_type, status="200 OK"):
+		"""
+		Writes the start of every HTTP 1.1 response to a client
+		"""
+		
 		self.write_line("HTTP/1.1 " + status)
 		self.write_line("Server:" + self.server)
 		self.write_line("Content-Type:" + content_type)
 		self.write_line()
 
 	def write_file(self, content_type):
-		"""Writes the contents of the requested (self.path) file."""
+		"""
+		Writes the contents of the requested (self.path) file to a client
+		"""
 		
-		# TODO : write 404 File not found if that is the case
 		try:
+			# try django media root
 			with open(settings.MEDIA_ROOT + self.path, "rb") as f:
 				self.write_response_start(content_type)
 				self.transport.write(f.read())
 		except IOError:
 			try:
+				# try reggae media root
 				with open(REGGAE_MEDIA_ROOT + self.path, "rb") as f:
 					self.write_response_start(content_type)
 					self.transport.write(f.read())
 			except IOError:
 				try:
+					# try django admin media
 					with open(DJANGO_ADMIN_PATH + self.path, "rb") as f:
 						self.write_response_start(content_type)
 						self.transport.write(f.read())
@@ -64,12 +72,17 @@ class RealtimeHttpProtocol(Protocol):
 		self.transport.loseConnection()
 	
 	def connectionMade(self):
-		"""Called when a client connection is made. See twisted Protocol docs."""
+		"""
+		Called when a client connection is made. See twisted Protocol docs.
+		"""
+		
 		pass
 #		 print "connection made from", str(self.transport.getPeer())
 
 	def connectionLost(self, reason):
-		"""Called when a client connection is lost or closed. See twisted Protocol docs."""
+		"""
+		Called when a client connection is lost or closed. See twisted Protocol docs.
+		"""
 
 		# TODO : write last known state of client to db
 		if hasattr(self, 'client_id'):
@@ -83,7 +96,9 @@ class RealtimeHttpProtocol(Protocol):
 					
 
 	def parse_url(self, data):
-		"""Builds the strings self.method, self.path, self.query"""
+		"""
+		Builds the strings self.method, self.path, self.query
+		"""
 		
 		first_line = data.split("\n", 1)[0].strip()
 		self.method, url, self.protocol = first_line.split(" ")
@@ -94,7 +109,9 @@ class RealtimeHttpProtocol(Protocol):
 			self.path, self.query = url, ''
 	
 	def parse_headers(self, data):
-		"""Builds the self.headers dictionary and the string self.data"""
+		"""
+		Builds the self.headers dictionary and the string self.data
+		"""
 		
 		headers = {}
 		headerLines = data.splitlines()[1:]
@@ -110,7 +127,9 @@ class RealtimeHttpProtocol(Protocol):
 		self.data = string.join(headerLines[i:], "\r\n").strip()
 	
 	def check_request(self, data):
-		"""Checks validity of the sent data and handles partial requests"""
+		"""
+		Checks validity of the sent data and handles partial requests
+		"""
 		
 		if not data.startswith("POST") and not data.startswith("GET") and not data.startswith("HEAD") and not self.waiting_for_data:
 			return False
@@ -131,15 +150,12 @@ class RealtimeHttpProtocol(Protocol):
 		return True
 	
 	def dataReceived(self, data):
-		"""Called when client has sent data. See twisted Protocol docs."""
-		
-#		 print "data received: ----------------------------"
-#		 print data
+		"""
+		Called when client has sent data. See twisted Protocol docs.
+		"""
 		
 		if not self.check_request(data):
 			return
-		
-		# TODO : handle file not found!
 		
 		if self.path.startswith("/_"):
 			self.handle_realtime_request()
@@ -171,10 +187,9 @@ class RealtimeHttpProtocol(Protocol):
 	def handle_realtime_request(self):
 		"""
 		Handles the realtime http stuff. Takes care of the correct message distribution.
-		For details of the protocol see WebContent/scripts/Network.js and .../ModelFacade.js
+		For details of the protocol see media/scripts/core/Network.js and media/scripts/management/Controller.js
 		"""
 		
-		# TODO : put this to the top => performance increase for time critical data
 		data_str = self.path[2:]
 		data_array = string.split(data_str, "_")
 		
@@ -186,6 +201,13 @@ class RealtimeHttpProtocol(Protocol):
 			self._handle_new_realtime_client()
 			# don't lose connection
 		else:
+			if not self.session_id in self.factory.session_id_to_client:
+				# session id wasn't found. maybe someone tries to attack.
+				self.write_response_start("text/plain", "500 Internal Server Error")
+				self.write_line("You are not a valid client.")
+				self.transport.loseConnection()
+				return
+
 			# send an ok answer so nobody tries to send again
 			self.write_response_start("text/plain")
 			
@@ -203,7 +225,10 @@ class RealtimeHttpProtocol(Protocol):
 			
 
 	def _handle_message(self, data_array, client):
-		"""Handle a realtime message request from client"""
+		"""
+		Handle a realtime (chat) message request from client
+		"""
+		
 		element_id = int(data_array[1]);
 		element = self.factory.simulator.get_element(element_id);
 		response_data = "\n".join(data_array)
@@ -214,7 +239,9 @@ class RealtimeHttpProtocol(Protocol):
 
 	
 	def _handle_change_velocity(self, data_array, client):
-		"""Handle a realtime change velocity request from client"""
+		"""
+		Handles a realtime change velocity request from client
+		"""
 
 		client_id = client.client_id
 		
@@ -261,19 +288,23 @@ class RealtimeHttpProtocol(Protocol):
 		
 	
 	def _handle_new_realtime_client(self):
-		# TODO : self.user ?
+		"""
+		Handles the connection of a new realtime client
+		"""
+		
 		# TODO : handle multiple logins with same user
 		user = persistence.get_user_for_session_id(self.session_id)
 		
 		if user.is_anonymous():
+			
 			# user isn't logged in => tell client to log in
 			self.write_line("li")
+			# TODO : write reverse('<login>')
 			self.transport.loseConnection()
 			
 		else:
 			self.client_id = user.id
-			# TODO : multiple player profiles?
-			self.client_name = persistence.get_profile_for_user(user)
+			self.client_name = user.username
 			
 			self.write_response_start("text/plain")
 			self.write_line("id")
@@ -299,7 +330,7 @@ class RealtimeHttpProtocol(Protocol):
 		simulator = self.factory.simulator
 
 		# create models and stuff for first time users
-		persistence.check_first_login(user)
+		persistence.get_user_manager().check_first_login(user)
 		
 		# first send everyone interested the models and views that are only visible when the user is logged in
 		# while at it collect all points that the new client wants to know about
@@ -312,7 +343,6 @@ class RealtimeHttpProtocol(Protocol):
 				pass
 			
 			model_str = ""
-			# TODO : not moving points don't belong in the grid??
 			interested_clients, _, _, _ = grid.change_point(point, self)
 			
 			model_str += point.to_realtime_http() + "\n"
@@ -329,7 +359,6 @@ class RealtimeHttpProtocol(Protocol):
 
 		# second send the user all stuff he needs to know
 			
-		# TODO : multiple world views???
 		world_view = user.worldview_set.all()[0]
 		self_model_str = world_view.to_realtime_http() + '\n'
 		
@@ -345,6 +374,10 @@ class RealtimeHttpProtocol(Protocol):
 		
 
 	def _write_controls_for_user(self, user):
+		"""
+		Tells the client all its controls
+		"""
+		
 		ctrlStr = ""
 		for ctrl in user.control_set.all():
 			ctrlStr += ctrl.to_realtime_http() + "\n"
@@ -393,10 +426,8 @@ class ProtocolWsgiHandler(BaseHandler):
 			else:
 				self.env['HTTP_' + key] = value
 		
-#		 print self.env
 
 	def _write(self, data):
-#		 print data 
 		self.protocol.transport.write(data);
 		self._write = self.protocol.transport.write
 		
@@ -416,8 +447,7 @@ class ProtocolWsgiHandler(BaseHandler):
 factory = ServerFactory()
 factory.protocol = RealtimeHttpProtocol
 
-# TODO : current world?
-world = World.objects.get(pk=1)
+world = World.objects.filter(game_id__exact=settings.GAME_ID)[0]
 world_size = max(world.get_width(), world.get_height())
 
 factory.grid = Grid(world_size)

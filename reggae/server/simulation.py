@@ -1,4 +1,4 @@
-from reggae.gameobjectpersistence.models import MovingPoint, Point
+from reggae.gameobjects.models import MovingPoint
 
 class Simulator():
     """Runs a persistent simulation of the world."""

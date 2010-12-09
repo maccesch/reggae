@@ -1,13 +1,13 @@
 from django.shortcuts import render_to_response
 from django.core import serializers
 from django.http import HttpResponse
+from django.conf import settings
 
 from models import World, FieldClass, Field
 from reggae.world.settings import FIELD_SIZE
 
 def _get_current_world(request):
-    # TODO : current world?
-    return World.objects.get(pk=1)
+    return World.objects.filter(game_id__exact=settings.GAME_ID)[0]
 
 def get_world_rect(request, x1, y1, x2, y2):
     x1 = int(x1)
@@ -33,6 +33,7 @@ def get_all_field_classes(request):
     json_serializer.serialize(FieldClass.objects.all(), stream=response)
     return response
 
+# TODO : editor is very unmature
 def editor(request):
     world = _get_current_world(request)
     

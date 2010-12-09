@@ -3,7 +3,6 @@
  * Basic Objects
  */
 
-// TODO : function print
 /**
  * Constructor of Point.
  * @classDescription This is the base class vor all physical object. Its just a point with
@@ -88,6 +87,7 @@ Point.prototype.length = function(x, y, z) {
  * MovingPoint extends Point
  ******************************************************************************/
 
+// TODO : document
 function MovingPoint() {
 	Point.call(this);
 

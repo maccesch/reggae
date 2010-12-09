@@ -3,13 +3,8 @@ from django.contrib.auth.middleware import AuthenticationMiddleware
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from reggae.gameobjectpersistence.models import MovingPoint
-from reggae.controls.models import Control
-from usermanagement.models import PlayerProfile, AvatarView, ViewPlayerNameDecoration,\
-	Avatar
-from reggae.world.models import WorldView
+from django.utils.importlib import import_module
 
-from random import random
 
 class PseudoRequest():
 	"""
@@ -17,6 +12,10 @@ class PseudoRequest():
 	logged in users.
 	"""
 	COOKIES = {}
+
+
+class UsermanagementNotAvailable(Exception):
+	pass
 
 
 def get_user_for_session_id(session_id):
@@ -35,11 +34,6 @@ def get_user_for_session_id(session_id):
 get_user_for_session_id.session_mw = SessionMiddleware()
 get_user_for_session_id.auth_mw = AuthenticationMiddleware()
 
-# TODO : all user profiles are gamecode
-def get_profile_for_user(user):
-	profile = user.playerprofile_set.all()[0].name
-	return profile
-
 
 def _create_anon_user():
 	_create_anon_user.anonymous_user_no += 1
@@ -49,75 +43,45 @@ def _create_anon_user():
 	if len(user) > 0:
 		user = user[0]
 	else:
-		user = User(username=username, password='1234')
+		user = User(username=username)
+		user.set_unusable_password()
 		user.save();
-		_create_default_profile(user)
+		get_user_manager().create_default_user_profile(user)
 	
 	return user
 
 _create_anon_user.anonymous_user_no = 0
 
 
-# TODO : move this to the PlayerProfile model
-def _create_default_profile(user):
-	avatar = Avatar(image_path='avatars/shortbrown.png')
-	avatar.save()
-	
-	profile = PlayerProfile(user=user, name=user.username, avatar=avatar)
-	profile.save()
-	return profile
+def get_user_manager():
+	if not get_user_manager.manager_cache:
+		if not getattr(settings, 'USERMANAGER_MODULE', False):
+			raise UsermanagementNotAvailable('You need to set USERMANAGER_MO'
+										  'DULE in your project settings')
+		try:
+			app_label, class_name = settings.USERMANAGER_MODULE.split('.')
+		except ValueError:
+			raise UsermanagementNotAvailable('app_label and class_name should'
+					' be separated by a dot in the USERMANAGER_MODULE set'
+					'ting')
+
+		try:
+#			app_module = import_module(app_label)
+			usermanagement = import_module('.usermanagement', app_label)
+			usermanagement_class = getattr(usermanagement, class_name)
+			get_user_manager.manager_cache = usermanagement_class()
+			
+		except (ImportError, AttributeError):
+			raise UsermanagementNotAvailable('Unable to load the usermanagement '
+				'class, check USERMANAGER_MODULE in your project sett'
+				'ings')
+			
+	return get_user_manager.manager_cache
+
+get_user_manager.manager_cache = None
 
 
-def _create_model_elements_for_new_user(user):
-	"""Creates all model elements and views for a new user. GAME_CODE"""
-#	created_models = []
-	
-	mp = MovingPoint(vx=0, vy=0, vz=0)
-	mp.x=random()*700 + 21 * 64
-	mp.y=random()*500 + 21 * 64
-	mp.z=0
-	mp.owner=user
-	mp.persistence=False
-	mp.element_id=1
-	mp.save()
-
-	wv = WorldView(centerX=mp.x, centerY=mp.y, centerZ=mp.z, follow_model=mp, owner=user)
-	wv.save()
-	
-	# TODO : active profile (multiple)?
-	profile = PlayerProfile.objects.filter(user__exact=user)[0]
-	
-	av = AvatarView(model=mp, player_profile=profile, bias_left=32, bias_top=64)
-	av.save()
-	
-	vd = ViewPlayerNameDecoration(model=mp, player_profile=profile)
-	vd.save()
-	
-	
-def _create_controls_for_new_user(user):
-	"""Creates all default controls for a new user. GAME_CODE"""
-	Control(owner=user, input="a", action_id="left", description="Move to the left").save()
-	Control(owner=user, input="d", action_id="right", description="Move to the right").save()
-	Control(owner=user, input="w", action_id="top", description="Move to the top").save()
-	Control(owner=user, input="s", action_id="bottom", description="Move to the bottom").save()
-	Control(owner=user, input="c", action_id="chat", description="Start chat").save()
-	
-	
-def _is_first_login(user):
-	"""Returns True if the user has logged in for the first time"""
-	return MovingPoint.objects.filter(owner__exact=user).count() == 0
-
-
-def check_first_login(user):
-	"""
-	If the user has logged for the first time, inital model elements are created and returned in a list.
-	An empty list is returned if the user isn't a first time login.
-	"""
-	if _is_first_login(user):
-		_create_controls_for_new_user(user)
-		_create_model_elements_for_new_user(user)
-
-
+# TODO : create view registry and check if for all possible views instead of hard coding it here
 def get_views_for_model(model):
 	"""Returns all view and decoration objects of the given model element or (client_id, element_id) tuple"""
 	

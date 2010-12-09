@@ -8,5 +8,4 @@ urlpatterns = patterns('',
     (r'^signup/$', 'usermanagement.views.user_creation'),
     (r'^signup_done/$', 'usermanagement.views.user_creation_done'),
     (r'^player_profile/$', 'usermanagement.views.player_profile_creation'),
-    # TODO : profile
 )

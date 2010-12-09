@@ -1,9 +1,7 @@
-#from math import floor
-
-# TODO : what about settings?
+from django.conf import settings
 
 # edge length of a grid cell in world units
-GRID_CELL_SIZE = 512
+GRID_CELL_SIZE = settings.GRID_CELL_SIZE
 
 # TODO : persistent models have to stay in the grid.
 
@@ -33,7 +31,7 @@ class Grid():
             
         self._subdivisions = subdivisions 
         
-        self._cells = [[GridCell() for i in range(self._subdivisions)] for i in range(self._subdivisions)]
+        self._cells = [[GridCell() for _ in range(self._subdivisions)] for _ in range(self._subdivisions)]
         
         self._model_id_to_cell = {}
         self._client_id_to_cells = {}
@@ -188,7 +186,7 @@ class Grid():
 
 
 class GridCell():
-    """One cell of Grid"""
+    """One cell of a Grid"""
     
     def __init__(self):
         

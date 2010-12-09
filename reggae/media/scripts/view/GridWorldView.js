@@ -160,7 +160,7 @@ WorldView.prototype.setViewCenter = function(x, y, z) {
 	this._gridMinY = Math.min(this._gridMinY, Math.max(0, gridY-1));
 	this._gridMaxY = Math.max(this._gridMaxY, gridY + 2);
 	
-	// TODO : when do we remove parts?
+	// TODO : remove parts, that are far away
 	// check if world parts should be deactivated
 	if (this._gridMaxX - this._gridMinX > WorldView.MAX_PARTS_PER_DIM) {
 		if ((this._gridMaxX - gridX - 1) > (gridX - this._gridMinX)) {
@@ -389,17 +389,15 @@ WorldPartView = function(worldElement, x1, y1, projection, biasLeft, biasTop, fi
 	this._active = false;
 }
 
-// TODO : get this from server. should be the same as the grid size of the server!
 /**
  * Size of a world part in world units.
  */
-WorldPartView.WORLD_PART_SIZE = 512;
+WorldPartView.WORLD_PART_SIZE = settings.GRID_CELL_SIZE;
 
-// TODO : get this from server.
 /**
  * Distance from one ground layer to the next in world units.
  */
-WorldPartView.LAYER_HEIGHT = 64;
+WorldPartView.LAYER_HEIGHT = settings.LAYER_HEIGHT;
 
 /**
  * Array of Array of views ordered by their layer no and z-index. lowest first.

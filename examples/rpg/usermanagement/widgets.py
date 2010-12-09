@@ -12,7 +12,6 @@ class AvatarSelect(Widget):
         """avatars is the list of Avatar objects (see models) to each avatar, width and height are the dimensions in pixels of the widget"""
         super(AvatarSelect, self).__init__(attrs)
 
-        # TODO : put this in a field?
         if len(avatars) == 0:
             avatars = Avatar.objects.order_by('id')
         self.avatars = list(avatars)
@@ -56,7 +55,6 @@ class AvatarSelect(Widget):
         options = ''
         i = 0
         for avatar in self.avatars:
-            # TODO : where to get the root image url?
             options += u'<img src="' + settings.MEDIA_URL + settings.SKINS_ROOT + settings.SKIN + '/' + settings.IMAGES_ROOT + avatar.image_path + '" alt="avatar option ' + unicode(i+1) + \
                         '" style="float: left; width: ' + unicode(self.width) + 'px;"/>'
             i += 1

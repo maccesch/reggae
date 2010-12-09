@@ -71,11 +71,11 @@ Controller.prototype._initBullets = function() {
 		var bulletView = new SimpleView(bullet, img);
 		this.bulletViews.push(bulletView);
 		
-		MainLoop.instance.register(bulletView);
-		MainLoop.instance.register(bullet);
+		MainLoop.instance.register(bulletView, 2, false);
+		MainLoop.instance.register(bullet, 0, true);
 		
-		MainLoop.instance.deactivate(bulletView);
-		MainLoop.instance.deactivate(bullet);
+		MainLoop.instance.deactivate(bulletView, 2, false);
+		MainLoop.instance.deactivate(bullet, 0, true);
 	}
 };
 
@@ -357,8 +357,8 @@ Controller.prototype._onNewSimpleImageViewReceive = function(elementId, imagePat
 	
 	// Points need no update
 	if (modelElement instanceof MovingPoint) {
-		MainLoop.instance.register(modelElement);
-		MainLoop.instance.register(view);
+		MainLoop.instance.register(modelElement, 0, true);
+		MainLoop.instance.register(view, 2, false);
 	}
 	
 	Controller.instance._worldView.addView(view);
@@ -387,8 +387,8 @@ Controller.prototype._onNewSimpleImageBuildingViewReceive = function(elementId, 
 	
 	// Points need no update
 	if (modelElement instanceof MovingPoint) {
-		MainLoop.instance.register(modelElement);
-		MainLoop.instance.register(view);
+		MainLoop.instance.register(modelElement, 0, true);
+		MainLoop.instance.register(view, 2, false);
 	}
 	
 	Controller.instance._worldView.addView(view);
@@ -423,9 +423,8 @@ Controller.prototype._onNewViewStringDecorationReceive = function(elementId, dec
  */
 Controller.prototype._onNewWorldViewReceive = function(centerX, centerY, centerZ, clientId) {
 	
-	// TODO : configure canvas size of world view?
 	Controller.instance._worldView = new WorldView(centerX, centerY, centerZ); 
-	MainLoop.instance.register(Controller.instance._worldView);
+	MainLoop.instance.register(Controller.instance._worldView, 2, false);
 }
 
 /**
@@ -454,9 +453,9 @@ Controller.prototype._removeViewsAndElements = function(clientId, elementIds) {
 	for (var i = 0; i < elementIds.length; ++i) {
 		var elementId = elementIds[i];
 		var view = Controller.instance._idToView[clientId][elementId];
-		MainLoop.instance.unregister(view);
-		MainLoop.instance.unregister(view.getModelElement());
-		Controller.instance._worldView.removeView(view);
+		MainLoop.instance.unregister(view, 2, false);
+		MainLoop.instance.unregister(view.getModelElement(), 0, true);
+		Controller.instance._worldView.removeView(view, 2, false);
 		delete Controller.instance._idToView[clientId][elementId];
 	}
 }

@@ -7,6 +7,7 @@ import('base.Util');
 import('base.BasicNetwork');
 import('core.Commands');
 import('core.MainLoop');
+import('core.Settings');
 
 // export Network
 var Network;
@@ -36,8 +37,7 @@ function package_core_Network() {
 Network = function() {
 
 	this._clientId = 0;
-	// TODO : sessionid is the default setting in django. maybe that setting should be queried instead of assuming the default value.
-	this._sessionId = Util.Cookie.get("sessionid");
+	this._sessionId = Util.Cookie.get(Settings.SESSION_COOKIE_NAME);
 	
 	this._receiveRequest = this.createRequest();
 	this._responseIndex = 0;

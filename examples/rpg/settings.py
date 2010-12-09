@@ -84,7 +84,7 @@ INSTALLED_APPS = (
     "reggae",
     "reggae.conf",
     "reggae.world",
-    "reggae.gameobjectpersistence",
+    "reggae.gameobjects",
     "reggae.controls",
     
     # game application
@@ -92,10 +92,20 @@ INSTALLED_APPS = (
     "gamemain",
 )
 
+AUTH_PROFILE_MODULE = 'usermanagement.PlayerProfile'
+
 # reggae settings
 
-# TODO: is this needed? If yes document it.
-LOGIN_REDIRECT_URL = '/'
+# required. has to be unique among games that share the same database.
+# used to identify the game that game objects belong to.
+GAME_ID = 1
+
+# required. looks now for usermanagement.usermanagement.UserManager
+# this is needed by the server
+USERMANAGER_MODULE = 'usermanagement.UserManager'
+
+# required. edge length of a grid cell in world units
+GRID_CELL_SIZE = 512
 
 # TODO: should this be stored in a database?
 SKIN = 'mousepaint'

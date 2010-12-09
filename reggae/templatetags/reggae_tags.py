@@ -14,6 +14,10 @@ class ReggaeScriptsNode(template.Node):
         'IMAGES_ROOT',
         'SKINS_ROOT',
         'SKIN',
+        'REGGAE_CANVAS_ID',
+        'GRID_CELL_SIZE',
+        'WORLD_LAYER_HEIGHT',
+        'SESSION_COOKIE_NAME',
     )
     
     def serialize_settings(self):
